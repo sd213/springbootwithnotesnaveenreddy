@@ -8,6 +8,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration  //Indicates that a class declares one or more @Bean methods and may be processed by the Spring container to generate bean definitions and service requests for those beans at runtime,
@@ -15,42 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //Short way of writing
 
-//        // Disable CSRF using the new approach
-////        http.csrf(customizer->customizer.disable());
-//        http.csrf(csrf -> csrf.disable());
-//        // Configure authorization using the modern method
-//        http.authorizeHttpRequests(request -> request.anyRequest().authenticated());
-//        http.formLogin(Customizer.withDefaults()); // form login for browser
-//        http.httpBasic(Customizer.withDefaults()); // form login for restclients like postman
-//        http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-//    //Long way of writing
-//
-//        Customizer<CsrfConfigurer<HttpSecurity>> customizedCsrfAnon = new Customizer<CsrfConfigurer<HttpSecurity>>() {
-//            @Override
-//            public void customize(CsrfConfigurer<HttpSecurity> csrf) {
-//                csrf.disable();
-//            }
-//        };
-//        http.csrf(customizedCsrfAnon); // To disable csrf
-
-//        Customizer<CsrfConfigurer<HttpSecurity>> customizedCsrfAnon = new Customizer<CsrfConfigurer<HttpSecurity>>() {
-//            @Override
-//            public void customize(CsrfConfigurer<HttpSecurity> csrf) {
-//                csrf.disable();
-//            }
-//        };
-//
-
-
-
-//        return http.build();
-    //Builder Pattern
-                // Disable CSRF using the new approach
-//        http.csrf(customizer->customizer.disable());
-       return http
+        return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request.anyRequest().authenticated())
 //                .formLogin(Customizer.withDefaults())
@@ -59,4 +30,28 @@ public class SecurityConfig {
                .build();
 
     }
+
+    @Bean
+    public UserDetailsService userDetailsService(){
+            UserDetails user1 = User.withDefaultPasswordEncoder().username("kiran").password("K@123").roles("USER").build();
+            UserDetails user2 = User.withDefaultPasswordEncoder().username("som").password("s@123").roles("ADMIN").build();
+
+        return new InMemoryUserDetailsManager(user1,user2);
+
+    }
+    /*The UserDetailsService interface in Spring Security is a core component that is responsible for retrieving user-related data. It is primarily used for the authentication process. Here’s a detailed explanation of its purpose and how it works:
+
+Purpose of UserDetailsService
+User Data Retrieval:
+
+The primary role of UserDetailsService is to load user-specific data from a data source (like a database) when an authentication request is made.
+It retrieves a user's details, including their username, password, roles, and any other relevant attributes required for authentication.
+Integration with Spring Security:
+
+Spring Security uses the UserDetailsService interface to obtain user details during the authentication process.
+By implementing this interface, you provide a way for Spring Security to find and authenticate users based on your application's specific needs.
+Custom User Details:
+
+You can create a custom implementation of UserDetailsService to suit your application's requirements.
+This allows you to define how user information is retrieved, including handling additional user attributes and implementing custom logic for user retrieval.*/
 }
