@@ -1,12 +1,15 @@
 package com.telusko.springsecurityex.service;
 
+import com.telusko.springsecurityex.model.UserPrincipal;
 import com.telusko.springsecurityex.model.Users;
 import com.telusko.springsecurityex.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
@@ -19,7 +22,7 @@ public class MyUserDetailsService implements UserDetailsService {
             System.out.println("User Not Found");
             throw new UsernameNotFoundException("User not Found");
         }
-        UserDetails
-        return ;
+
+        return new UserPrincipal(user);
     }
 }
